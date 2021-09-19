@@ -1,4 +1,6 @@
-import { combineReducers, createStore } from "redux"
+import { applyMiddleware, combineReducers, createStore } from "redux"
+import { composeWithDevTools } from "redux-devtools-extension"
+import thunk from "redux-thunk"
 
 const initialState = {
     title: 'Fake Instagram'
@@ -15,4 +17,4 @@ const reducers = combineReducers({
     app: sharedReducer
 })
 
-export const store = createStore(reducers);
+export const store = createStore(reducers, composeWithDevTools(applyMiddleware(thunk)));

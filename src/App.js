@@ -9,11 +9,30 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import Landing from './components/Landing';
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Link
+} from 'react-router-dom';
+import Home from './components/Home';
 
 function App(props) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const signIn = () => {
     signInUser().then(() => {
@@ -28,12 +47,13 @@ function App(props) {
   }
 
   return (
-    <div>
+    <Router>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
             {isUserLoggedIn ? (<>
               <IconButton
+                onClick={handleClick}
                 size="large"
                 edge="start"
                 color="inherit"
@@ -42,6 +62,17 @@ function App(props) {
               >
                 <MenuIcon />
               </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={handleClose}><Link to="/home">Home</Link></MenuItem>
+              </Menu>
             </>) : (<></>)}
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               {props.title}
@@ -54,9 +85,12 @@ function App(props) {
         </AppBar>
       </Box>
       <Container maxWidth="lg">
-        <Landing />
+        <Switch>
+          <Route path="/home" component={Home} />
+          <Route path="/" component={Landing} />
+        </Switch>
       </Container>
-    </div>
+    </Router>
   );
 }
 

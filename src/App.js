@@ -17,13 +17,16 @@ import {
   BrowserRouter as Router,
   Route,
   Switch,
-  Link
+  Link,
+  Redirect
 } from 'react-router-dom';
 import Home from './components/Home';
+import PrivateRoute from './components/PrivateRoute';
 
 function App(props) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!localStorage.getItem('token'));
   const [anchorEl, setAnchorEl] = useState(null);
+  const [redirect, setRedirect] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -37,6 +40,7 @@ function App(props) {
   const signIn = () => {
     signInUser().then(() => {
       setIsUserLoggedIn(true);
+      setRedirect(true);
     })
   }
 
@@ -48,6 +52,7 @@ function App(props) {
 
   return (
     <Router>
+      {redirect ? (<Redirect push to="/home" />) : (null)}
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static">
           <Toolbar>
@@ -86,7 +91,7 @@ function App(props) {
       </Box>
       <Container maxWidth="lg">
         <Switch>
-          <Route path="/home" component={Home} />
+          <PrivateRoute path="/home" component={Home} />
           <Route path="/" component={Landing} />
         </Switch>
       </Container>

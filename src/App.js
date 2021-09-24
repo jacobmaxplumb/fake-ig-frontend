@@ -22,6 +22,7 @@ import {
 } from 'react-router-dom';
 import Home from './components/Home';
 import PrivateRoute from './components/PrivateRoute';
+import Profile from './components/Profile';
 
 function App(props) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -77,6 +78,7 @@ function App(props) {
                 }}
               >
                 <MenuItem onClick={handleClose}><Link to="/home">Home</Link></MenuItem>
+                <MenuItem onClick={handleClose}><Link to="/profile">Profile</Link></MenuItem>
               </Menu>
             </>) : (<></>)}
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
@@ -91,6 +93,7 @@ function App(props) {
       </Box>
       <Container maxWidth="lg">
         <Switch>
+          <PrivateRoute path="/profile" component={Profile} />
           <PrivateRoute path="/home" component={Home} />
           <Route path="/" component={Landing} />
         </Switch>

@@ -10,7 +10,7 @@ const initalState = {
 export const userReducer = (state = initalState, action) => {
     switch(action.type) {
         case GET_USER_DATA_SUCCESS:
-            return {...state, ...action.userData, isUpdate: false}
+            return {...state, ...action.userData, isUpdating: false}
         case UPDATE_NAME:
             return {...state, fullName: action.name, isUpdating: true}
         case UPDATE_AGE:

@@ -5,6 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
 import './Profile.css';
 import { updateUserData } from '../services/user.service';
 import { connect } from 'react-redux';
@@ -13,6 +14,7 @@ import { getUserDataAction, updateAgeAction, updateNameAction } from '../actions
 
 const Profile = (props) => {
     const [gotProfileData, setGotProfileData] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
         if (!gotProfileData) {
@@ -20,6 +22,16 @@ const Profile = (props) => {
             setGotProfileData(true);
         }
     })
+
+    const handleUpdate = (e) => {
+        e.preventDefault();
+        updateUserData({fullName: props.fullName, age: props.age, signedUp: props.signedUp});
+        setShowAlert(true);
+        setTimeout(() => {
+            setShowAlert(false);
+        }, 2000)
+        props.getUserDataAction();
+    }
 
     return (
         <div className="page-content">
@@ -58,9 +70,11 @@ const Profile = (props) => {
 
                     </CardContent>
                     <CardActions className="card-actions">
-                        <Button size="small" variant="contained" onClick={() => updateUserData({fullName: props.fullName, age: props.age, signedUp: props.signedUp})}>Save</Button>
+                        <Button disabled={!props.isUpdating} size="small" variant="contained" onClick={handleUpdate}>Save</Button>
                     </CardActions>
                 </Card>
+                {showAlert ? <Alert className="alert" severity="success">This is a success alert — check it out!</Alert> : null}
+                
             </Container>
         </div>
     );
@@ -70,7 +84,8 @@ const mapStateToProps = (state) => {
     return {
         fullName: state.user.fullName,
         age: state.user.age,
-        signedUp: state.user.signedUp
+        signedUp: state.user.signedUp,
+        isUpdating: state.user.isUpdating
     }
 }
 

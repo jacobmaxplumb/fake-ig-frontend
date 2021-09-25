@@ -23,6 +23,7 @@ import {
 import Home from './components/Home';
 import PrivateRoute from './components/PrivateRoute';
 import Profile from './components/Profile';
+import { getUserDataAction } from './actions/user.actions';
 
 function App(props) {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -41,6 +42,7 @@ function App(props) {
   const signIn = () => {
     signInUser().then(() => {
       setIsUserLoggedIn(true);
+      props.getUserDataAction();
       setRedirect(true);
     })
   }
@@ -108,4 +110,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, {})(App);
+export default connect(mapStateToProps, { getUserDataAction })(App);

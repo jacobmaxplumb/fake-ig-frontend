@@ -1,0 +1,19 @@
+.profile-info-item {
+    margin-bottom: 10px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 20px;
+}
+
+.text-fields {
+    display: flex;
+    flex-direction: column;
+}
+
+.text-field-input {
+    margin-bottom: 10px !important;
+}

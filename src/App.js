@@ -1,6 +1,6 @@
 import './App.css';
 import { connect } from 'react-redux';
-import { signInUser, signOutUser } from './services/firebase.service';
+import { isTokenValid, signInUser, signOutUser } from './services/firebase.service';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,7 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Landing from './components/Landing';
 import {
   BrowserRouter as Router,
@@ -30,6 +30,16 @@ function App(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [redirect, setRedirect] = useState(false);
   const open = Boolean(anchorEl);
+  
+  useEffect(() => {
+    isTokenValid().then(() => {
+      setRedirect(true);
+    }).catch(() => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('uid');
+    })
+  }, [])
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,7 +52,6 @@ function App(props) {
   const signIn = () => {
     signInUser().then(() => {
       setIsUserLoggedIn(true);
-      props.getUserDataAction();
       setRedirect(true);
     })
   }
@@ -50,6 +59,7 @@ function App(props) {
   const signOut = () => {
     signOutUser().then(() => {
       setIsUserLoggedIn(false);
+      setRedirect(false);
     })
   }
 
@@ -110,4 +120,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, { getUserDataAction })(App);
+export default connect(mapStateToProps, {})(App);

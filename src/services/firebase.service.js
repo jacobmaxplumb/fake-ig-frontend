@@ -1,19 +1,21 @@
 // Import the functions you need from the SDKs you need
+import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { axiosWithHeaders } from "./axios.interceptor";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAgiqfIW24xGQwmjPL-Ja1DE2F15I6pm08",
-  authDomain: "fake-ig-project.firebaseapp.com",
-  projectId: "fake-ig-project",
-  storageBucket: "fake-ig-project.appspot.com",
-  messagingSenderId: "151630048504",
-  appId: "1:151630048504:web:5f67da393594da1bf01f0d",
-  measurementId: "G-GXGRMMLSYH"
+  apiKey: "AIzaSyAMNmOavSsAwKoNDTEVBJTVzCqrhvG1Ld4",
+  authDomain: "fake-ig-demo.firebaseapp.com",
+  projectId: "fake-ig-demo",
+  storageBucket: "fake-ig-demo.appspot.com",
+  messagingSenderId: "736644692439",
+  appId: "1:736644692439:web:5ce6778a59b5d531e7f392",
+  measurementId: "G-RNXWZFEG7B"
 };
 
 // Initialize Firebase
@@ -33,4 +35,8 @@ export const signOutUser = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('uid');
   })
+}
+
+export const isTokenValid = () => {
+  return axiosWithHeaders().get('http://localhost:8080/api/verifyToken').then(res => res.data).catch(error => {throw error});
 }

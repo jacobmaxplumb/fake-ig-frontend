@@ -7,30 +7,36 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import './Profile.css';
-import { updateUserData } from '../services/user.service';
-import { connect } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { getUserDataAction, updateAgeAction, updateNameAction } from '../actions/user.actions';
+import { store } from '../reducer';
+import { userUpdatedAction } from '../actions/shared.actions';
+import { connect } from 'react-redux';
 
 const Profile = (props) => {
-    const [gotProfileData, setGotProfileData] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        if (!gotProfileData) {
-            props.getUserDataAction();
-            setGotProfileData(true);
-        }
-    })
+        store.subscribe(() => {
+            console.log('subscribe ran');
+        })
+    }, [])
 
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        updateUserData({fullName: props.fullName, age: props.age, signedUp: props.signedUp});
-        setShowAlert(true);
+    const updateName = (e) => {
+        props.setUser({...props.user, displayName: e.target.value});
+        setIsUpdating(true);
+    }
+
+    const updateAge = (e) => {
+        props.setUser({...props.user, age: e.target.value});
+        setIsUpdating(true);
+    }
+
+    const handleUpdate = () => {
+        props.userUpdatedAction(props.user);
         setTimeout(() => {
             setShowAlert(false);
         }, 2000)
-        props.getUserDataAction();
     }
 
     return (
@@ -41,36 +47,36 @@ const Profile = (props) => {
                         <Avatar
                             alt="Remy Sharp"
                             sx={{ width: 200, height: 200 }}
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-9xxbYphZGp1R9Hw3rImD5fp08vV2YDxyUQ&usqp=CAU" />
+                            src={props.user.photoUrl} />
                         <div className="profile-info">
-                            <div className="profile-info-item">Name: {props.fullName}</div>
-                            <div className="profile-info-item">Age: {props.age}</div>
-                            <div className="profile-info-item">Date Joined: {props.signedUp}</div>
+                            <div className="profile-info-item">Name: {props.user.displayName}</div>
+                            <div className="profile-info-item">Age: {props.user.age}</div>
+                            <div className="profile-info-item">Date Joined: {props.user.metadata.creationTime}</div>
                         </div>
                     </CardContent>
                 </Card>
                 <Card sx={{ minWidth: 275 }}>
                     <CardContent className="text-fields">
-                        {props.fullName ? (<>
+                        {props.user ? (<>
                             <TextField
                                 className="text-field-input"
                                 id="outlined-basic"
                                 label="Outlined"
                                 variant="outlined"
-                                value={props.fullName}
-                                onChange={(e) => props.updateNameAction(e.target.value)} />
+                                value={props.user.displayName}
+                                onChange={updateName} />
                             <TextField
                                 className="text-field-input"
                                 id="outlined-basic"
                                 label="Outlined"
                                 variant="outlined"
-                                value={props.age}
-                                onChange={(e) => props.updateAgeAction(e.target.value)} />
+                                value={props.user.hasOwnProperty('age') ? props.user.age : 0}
+                                onChange={updateAge} />
                         </>) : (<></>)}
 
                     </CardContent>
                     <CardActions className="card-actions">
-                        <Button disabled={!props.isUpdating} size="small" variant="contained" onClick={handleUpdate}>Save</Button>
+                        <Button disabled={!isUpdating} size="small" variant="contained" onClick={handleUpdate}>Save</Button>
                     </CardActions>
                 </Card>
                 {showAlert ? <Alert className="alert" severity="success">This is a success alert — check it out!</Alert> : null}
@@ -80,13 +86,4 @@ const Profile = (props) => {
     );
 }
 
-const mapStateToProps = (state) => {
-    return {
-        fullName: state.user.fullName,
-        age: state.user.age,
-        signedUp: state.user.signedUp,
-        isUpdating: state.user.isUpdating
-    }
-}
-
-export default connect(mapStateToProps, { getUserDataAction, updateNameAction, updateAgeAction })(Profile);
+export default connect(null, { userUpdatedAction })(Profile);
